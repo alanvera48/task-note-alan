@@ -1,0 +1,165 @@
+.note {
+    position: absolute;
+    top: 0;
+    left: 0;
+    display: flex;
+    flex-direction: column;
+    border-radius: 6px;
+    background: var(--note-bg);
+    box-shadow:
+      0 1px 2px rgb(0 0 0 / 0.1),
+      0 4px 12px rgb(0 0 0 / 0.08);
+    transition:
+      box-shadow 0.15s,
+      opacity 0.15s,
+      rotate 0.15s,
+      scale 0.15s;
+  }
+  
+  .note:focus-within {
+    box-shadow:
+      0 0 0 2px var(--note-edge),
+      0 4px 16px rgb(0 0 0 / 0.12);
+  }
+  
+  .note[data-gesture] {
+    will-change: transform;
+    box-shadow:
+      0 2px 4px rgb(0 0 0 / 0.08),
+      0 14px 32px rgb(0 0 0 / 0.2);
+  }
+  
+  .note[data-gesture='move'] {
+    rotate: 1.5deg;
+  }
+  
+  .note[data-over-trash='true'] {
+    opacity: 0.6;
+    scale: 0.9;
+    outline: 2px solid var(--danger);
+  }
+  
+  .note__header {
+    display: flex;
+    flex: none;
+    align-items: center;
+    justify-content: flex-end;
+    height: 28px;
+    padding: 0 8px;
+    border-radius: 6px 6px 0 0;
+    background: var(--note-edge);
+    cursor: grab;
+  }
+  
+  .note__option-header {
+    --swatch-size: 12px;
+    opacity: 0;
+    transition: opacity 0.15s;
+  }
+  
+  .note:hover .note__option-header,
+  .note:focus-within .note__option-header {
+    opacity: 1;
+  }
+  
+  .note__text {
+    flex: 1;
+    min-height: 0;
+    padding: 10px 12px;
+    border: 0;
+    outline: 0;
+    background: transparent;
+    color: var(--ink);
+    font: inherit;
+    font-size: 15px;
+    line-height: 1.45;
+    resize: none;
+  }
+  
+  .note__text::placeholder {
+    color: rgb(0 0 0 / 0.35);
+  }
+  
+  /* Resize hit areas straddle the note's border; corners sit above edges. */
+  .note__resize {
+    position: absolute;
+    z-index: 1;
+  }
+  
+  .note__resize--n,
+  .note__resize--s {
+    right: 10px;
+    left: 10px;
+    height: 8px;
+  }
+  
+  .note__resize--e,
+  .note__resize--w {
+    top: 10px;
+    bottom: 10px;
+    width: 8px;
+  }
+  
+  .note__resize--n {
+    top: -4px;
+  }
+  
+  .note__resize--s {
+    bottom: -4px;
+  }
+  
+  .note__resize--e {
+    right: -4px;
+  }
+  
+  .note__resize--w {
+    left: -4px;
+  }
+  
+  .note__resize--ne,
+  .note__resize--nw,
+  .note__resize--se,
+  .note__resize--sw {
+    z-index: 2;
+    width: 16px;
+    height: 16px;
+  }
+  
+  .note__resize--ne {
+    top: -4px;
+    right: -4px;
+  }
+  
+  .note__resize--nw {
+    top: -4px;
+    left: -4px;
+  }
+  
+  .note__resize--se {
+    right: -4px;
+    bottom: -4px;
+  }
+  
+  .note__resize--sw {
+    bottom: -4px;
+    left: -4px;
+  }
+  
+  /* Visible grip in the bottom-right corner hints that notes can be resized. */
+  .note__resize--se::after {
+    content: '';
+    position: absolute;
+    right: 7px;
+    bottom: 7px;
+    width: 8px;
+    height: 8px;
+    background: linear-gradient(
+      135deg,
+      transparent 45%,
+      rgb(0 0 0 / 0.25) 45% 55%,
+      transparent 55% 70%,
+      rgb(0 0 0 / 0.25) 70% 80%,
+      transparent 80%
+    );
+  }
+  

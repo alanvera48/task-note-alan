@@ -1,0 +1,143 @@
+/* :root {
+
+    --ink: #1f2328;
+    --ink-muted: #59636e;
+    --line: #e2ded6;
+    --surface: #fff;
+    --board-bg: #f4f2ed;
+    --board-dot: #d6d1c7;
+    --danger: #d1242f;
+    --focus: #0969da;
+  
+
+    font-family: system-ui,
+        -apple-system,
+        'Segoe UI',
+        Roboto,
+        sans-serif;
+}
+
+[data-color='yellow'] {
+    --note-bg: #fff4a8;
+    --note-edge: #f9e27a;
+  }
+  
+  [data-color='pink'] {
+    --note-bg: #ffd9e6;
+    --note-edge: #ffbcd3;
+  }
+  
+  [data-color='green'] {
+    --note-bg: #d6f5cc;
+    --note-edge: #b6e9a6;
+  }
+  
+  [data-color='blue'] {
+    --note-bg: #d3e9ff;
+    --note-edge: #addaff;
+  }
+  
+  [data-color='violet'] {
+    --note-bg: #e8ddff;
+    --note-edge: #d3c3ff;
+  }
+
+  html,
+body,
+#root {
+  height: 100%;
+  margin: 0;
+}
+
+body {
+  overflow: hidden;
+  background: var(--board-bg);
+}
+
+button,
+textarea {
+  font: inherit;
+}
+
+html.is-dragging,
+html.is-dragging * {
+  cursor: var(--drag-cursor) !important;
+  user-select: none !important;
+} */
+
+
+:root {
+  --ink: #1f2328;
+  --ink-muted: #59636e;
+  --line: #e2ded6;
+  --surface: #fff;
+  --board-bg: #f4f2ed;
+  --board-dot: #d6d1c7;
+  --danger: #d1242f;
+  --focus: #0969da;
+
+  color: var(--ink);
+  font-family:
+    system-ui,
+    -apple-system,
+    'Segoe UI',
+    Roboto,
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Note palette. Names must match NOTE_COLORS in src/model/note.ts. */
+[data-color='yellow'] {
+  --note-bg: #fff4a8;
+  --note-edge: #f9e27a;
+}
+
+[data-color='pink'] {
+  --note-bg: #ffd9e6;
+  --note-edge: #ffbcd3;
+}
+
+[data-color='green'] {
+  --note-bg: #d6f5cc;
+  --note-edge: #b6e9a6;
+}
+
+[data-color='blue'] {
+  --note-bg: #d3e9ff;
+  --note-edge: #addaff;
+}
+
+[data-color='violet'] {
+  --note-bg: #e8ddff;
+  --note-edge: #d3c3ff;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+  margin: 0;
+}
+
+body {
+  overflow: hidden;
+  background: var(--board-bg);
+}
+
+button,
+textarea {
+  font: inherit;
+}
+
+/* Set by startPointerDrag (src/interaction/pointerDrag.ts) while a drag is in progress. */
+html.is-dragging,
+html.is-dragging * {
+  cursor: var(--drag-cursor) !important;
+  user-select: none !important;
+}
