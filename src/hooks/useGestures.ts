@@ -96,7 +96,7 @@ export function useGestures(
         onCreate(rect)
       },
     })
-  }, [])
+  }, [onCreate])
 
 
   const startMove = useCallback(

@@ -1,6 +1,22 @@
 .board {
   position: relative;
+  height: 100%;
+  min-width: 0;
+  min-height: 0;
   overflow: hidden;
+  background-color: var(--board-bg);
+}
+
+.board__scroll {
+  height: 100%;
+  overflow: auto;
+}
+
+.board__canvas {
+  position: relative;
+  overflow: hidden;
+  min-width: 100%;
+  min-height: 100%;
   background-color: var(--board-bg);
   background-image: radial-gradient(var(--board-dot) 1px, transparent 1px);
   background-size: 24px 24px;

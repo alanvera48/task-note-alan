@@ -20,6 +20,7 @@ function App({ api, sync }: AppProps) {
       <Toolbar
         newNoteColor={newNoteColor}
         onNewNoteColorChange={setNewNoteColor}
+        actions={actions}
       />
 
       {loadingStatus === 'ready' ? (

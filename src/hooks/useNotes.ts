@@ -7,6 +7,7 @@ import type { Note } from '../components/NoteCard/NoteCard.types'
 interface NotesState {
   readonly notes: readonly Note[]
   readonly removedLast: Note | null
+  readonly removedLastCards: readonly Note[] | null
 }
 
 export type NewNote = Omit<Note, 'z'>
@@ -22,6 +23,7 @@ export interface NoteActions {
   readonly remove: (id: string) => void
   readonly undoRemove: () => void
   readonly dismissRemoved: () => void
+  readonly undoRemoveLastCards: () => void
 }
 
 export type NotesAction =
@@ -37,6 +39,7 @@ export type NotesAction =
   | { readonly type: 'bringToFront'; readonly id: string }
   | { readonly type: 'remove'; readonly id: string }
   | { readonly type: 'undoRemove' }
+  | { readonly type: 'undoRemoveLastCards' }
   | { readonly type: 'dismissRemoved' }
 
 export const NOTE_COLORS = ['yellow', 'pink', 'green', 'blue', 'violet'] as const
@@ -45,6 +48,7 @@ type NoteColor = (typeof NOTE_COLORS)[number]
 const INITIAL_STATE: NotesState = {
   notes: [],
   removedLast: null,
+  removedLastCards: null,
 }
 
 export function createNoteId(): string {
@@ -77,7 +81,7 @@ export function notesReducer(
 ): NotesState {
   switch (action.type) {
     case 'load':
-      return { notes: action.notes, removedLast: null }
+      return { notes: action.notes, removedLast: null, removedLastCards: null }
 
     case 'add':
       return {
@@ -115,6 +119,7 @@ export function notesReducer(
       return {
         notes: state.notes.filter((note) => note !== removed),
         removedLast: removed,
+        removedLastCards: state.removedLastCards ? [...state.removedLastCards, removed] : [removed],
       }
     }
 
@@ -124,6 +129,18 @@ export function notesReducer(
       return {
         notes: [...state.notes, { ...removedLast, z: topZ(state.notes) + 1 }],
         removedLast: null,
+        removedLastCards: null,
+      }
+    }
+
+    case 'undoRemoveLastCards': {
+      const { removedLastCards } = state
+      if (!removedLastCards) return state
+
+      return {
+        notes: [...state.notes, ...removedLastCards.slice(-1)],
+        removedLast: null,
+        removedLastCards: [...removedLastCards.slice(0, -1)],
       }
     }
 
@@ -203,6 +220,9 @@ export function useNotes(api: NotesApi, sync: NotesSync) {
       },
       dismissRemoved: () => {
         dispatch({ type: 'dismissRemoved' })
+      },
+      undoRemoveLastCards: () => {
+        dispatch({ type: 'undoRemoveLastCards' })
       },
     }),
     [],

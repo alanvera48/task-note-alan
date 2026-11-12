@@ -27,6 +27,8 @@ export function OptionHeader({ value, onChange, label, className }: OptionHeader
           aria-label={NOTE_COLOR_LABELS[color as NoteColor]}
           title={NOTE_COLOR_LABELS[color as NoteColor]}
           onClick={() => {
+            console.log(color, 'colorcolor');
+            
             onChange(color);
           }}
         />

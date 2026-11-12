@@ -1,4 +1,4 @@
-import { useCallback, useRef, useState, type MouseEvent } from 'react'
+import { useCallback, useMemo, useRef, useState, type MouseEvent } from 'react'
 import { useElementSize } from '../../hooks/useElementSize'
 import {
   centerRectAt,
@@ -8,7 +8,7 @@ import {
   type Size,
 } from '../../model/geometry'
 
-import { useGestures } from '../../hooks/useGestures'
+import { useGestures, type Gesture } from '../../hooks/useGestures'
 import { createNoteId, type NoteActions } from '../../hooks/useNotes'
 import { TrashZone, type TrashStateZone } from '../TrashZone/TrashZone'
 import './Board.css'
@@ -18,6 +18,20 @@ import { NoteCard } from '../NoteCard/NoteCard'
 const UNBOUNDED: Size = {
   width: Infinity,
   height: Infinity,
+}
+
+function boardExtent(notes: readonly Note[], gesture: Gesture | null): Size {
+  let width = 0
+  let height = 0
+  for (const note of notes) {
+    width = Math.max(width, note.rect.x + note.rect.width)
+    height = Math.max(height, note.rect.y + note.rect.height)
+  }
+  if (gesture) {
+    width = Math.max(width, gesture.rect.x + gesture.rect.width)
+    height = Math.max(height, gesture.rect.y + gesture.rect.height)
+  }
+  return { width, height }
 }
 
 interface BoardProps {
@@ -31,11 +45,13 @@ export function Board({ notes, newNoteColor, actions }: BoardProps) {
   const [focusId, setFocusId] = useState<string | null>(null)
   const trashRef = useRef<HTMLDivElement>(null)
 
-  console.log(notes, 'dasdsa')
+  console.log(newNoteColor, 'newNoteColor')
 
   const createNote = useCallback(
     (rect: Rect) => {
       const id = createNoteId()
+      console.log(newNoteColor, 'create note no');
+      
       actions.add({ id, rect, color: newNoteColor, text: '' })
       setFocusId(id)
     },
@@ -51,6 +67,7 @@ export function Board({ notes, newNoteColor, actions }: BoardProps) {
       onRemove: actions.remove,
     },
   )
+  const extent = useMemo(() => boardExtent(notes, gesture), [notes, gesture])
   const noteGesture = gesture && gesture.kind !== 'create' ? gesture : undefined
 
   const handleDoubleClick = (event: MouseEvent<HTMLElement>) => {
@@ -66,42 +83,49 @@ export function Board({ notes, newNoteColor, actions }: BoardProps) {
   if (gesture?.kind === 'move') trashState = gesture.overTrash ? 'hot' : 'armed'
 
   return (
-    <main
-      ref={boardRef}
-      className="board"
-      aria-label="Notes board"
-      onPointerDown={startCreateNote}
-      onDoubleClick={handleDoubleClick}
-    >
-      <div className="board__notes">
-        {notes.map((note) => (
-          <NoteCard
-            key={note.id}
-            note={note}
-            bounds={bounds}
-            gesture={noteGesture?.noteId === note.id ? noteGesture : undefined}
-            autoFocus={note.id === focusId}
-            onActivate={actions.bringToFront}
-            onMoveStart={startMove}
-            onResizeStart={startResize}
-            onTextChange={actions.setText}
-            onColorChange={actions.setColor}
-          />
-        ))}
-      </div>
-      {gesture?.kind === 'create' && (
+    <main className="board" aria-label="Notes board">
+      <div className="board__scroll">
         <div
-          className="board__draft"
-          data-color={newNoteColor}
+          ref={boardRef}
+          className="board__canvas"
           style={{
-            width: gesture.rect.width,
-            height: gesture.rect.height,
-            transform: `translate(${String(gesture.rect.x)}px, ${String(gesture.rect.y)}px)`,
+            width: extent.width || undefined,
+            height: extent.height || undefined,
           }}
+          onPointerDown={startCreateNote}
+          onDoubleClick={handleDoubleClick}
         >
-          {Math.round(gesture.rect.width)} × {Math.round(gesture.rect.height)}
+          <div className="board__notes">
+            {notes.map((note) => (
+              <NoteCard
+                key={note.id}
+                note={note}
+                bounds={bounds}
+                gesture={noteGesture?.noteId === note.id ? noteGesture : undefined}
+                autoFocus={note.id === focusId}
+                onActivate={actions.bringToFront}
+                onMoveStart={startMove}
+                onResizeStart={startResize}
+                onTextChange={actions.setText}
+                onColorChange={actions.setColor}
+              />
+            ))}
+          </div>
+          {gesture?.kind === 'create' && (
+            <div
+              className="board__draft"
+              data-color={newNoteColor}
+              style={{
+                width: gesture.rect.width,
+                height: gesture.rect.height,
+                transform: `translate(${String(gesture.rect.x)}px, ${String(gesture.rect.y)}px)`,
+              }}
+            >
+              {Math.round(gesture.rect.width)} × {Math.round(gesture.rect.height)}
+            </div>
+          )}
         </div>
-      )}
+      </div>
       <TrashZone ref={trashRef} state={trashState} />
     </main>
   )
